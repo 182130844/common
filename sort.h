@@ -8,6 +8,7 @@
 //  DESCRIPTION: MERGE SORT, QUICK SORT, HEAP SORT
 //------------------------------------------------
 */
+#include <assert.h>
 
 template<class T>
 struct default_compare {
@@ -62,6 +63,8 @@ template<class T, int MAX_SIZE = 2048>
 void merge_sort(T* array, int size) {
 	if (!array || size <= 0)
 		return;
+	
+	assert(size <= MAX_SIZE);
 
 	T temp[MAX_SIZE];
 	_MERGE_SORT(array, 0, size - 1, temp, default_compare<T>());
@@ -73,6 +76,8 @@ template<class T, int MAX_SIZE = 2048, class _PR>
 void merge_sort(T* array, int size, _PR _pred) {
 	if (!array || size <= 0)
 		return;
+
+	assert(size <= MAX_SIZE);
 
 	T temp[MAX_SIZE];
 	_MERGE_SORT(array, 0, size - 1, temp, _pred);
@@ -166,6 +171,9 @@ void _HEAP_ADJUST(T* s, int i, int length, _PR _pred) {
 
 template<class T, class _PR>
 void heap_sort(T* array, int size, _PR _pred) {
+	if (!array || size <= 0)
+		return;
+
 	int i;
 	// 调整序列的前半部分元素，调整完之后第一个元素是序列的最大（或最小）的元素
 	// length/2-1是最后一个非叶结点，此处/为整除
@@ -191,4 +199,52 @@ void heap_sort(T* array, int size) {
 	heap_sort(array, size, default_compare<T>());
 }
 
+// ---------------------------------------------------
+
+// ---------------------------------------------------
+
+// 定向冒泡排序
+// 最差时间复杂度     O(n^2)
+// 最优时间复杂度接近 O(n)
+
+template<class T, class _PR>
+void bubble_sort(T* array, int size, _PR _pred) {
+	if (!array || size <= 0)
+		return;
+
+	int first = 0;
+	int last = size - 1;
+
+	while (first < last) {
+
+		// 前半轮，将最大元素放到后面
+		for (int i = first; i < last; i++) {
+			if (_pred(array[i + 1], array[i])) {
+				T t = array[i];
+				array[i] = array[i + 1];
+				array[i + 1] = t;
+			}
+		}
+		last--;
+
+		// 后半轮，将最小元素放到前面
+		for (int i = last; i > first; i--) {
+			if (_pred(array[i], array[i - 1])) {
+				T t = array[i - 1];
+				array[i - 1] = array[i];
+				array[i] = t;
+			}
+		}
+		first++;
+	}
+}
+
+// 定向冒泡排序
+
+template<class T>
+void bubble_sort(T* array, int size) {
+	bubble_sort(array, size, default_compare<T>());
+}
+
+// ---------------------------------------------------
 #endif // __sort_h__
