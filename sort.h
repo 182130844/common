@@ -5,7 +5,7 @@
 //       AUTHOR: SHADOW
 //      ADDRESS: SHENZHEN
 //         DATE: 8/7 2017
-//  DESCRIPTION: MERGE SORT, QUICK SORT, HEAP SORT
+//  DESCRIPTION: MERGE, QUICK, HEAP, BUBBLE
 //------------------------------------------------
 */
 #include <assert.h>
