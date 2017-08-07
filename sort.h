@@ -9,6 +9,7 @@
 //------------------------------------------------
 */
 #include <assert.h>
+#include <xutility>
 
 template<class T>
 struct default_compare {
@@ -16,6 +17,13 @@ struct default_compare {
 		return (t1 < t2);
 	}
 };
+
+template<class T>
+inline void default_swap(T& t1, T& t2) {
+	T tt(std::move(t1));
+	t1 = std::move(t2);
+	t2 = std::move(tt);
+}
 
 template<class T, class _PR>
 void _MERGE_ARRAY(T* s, int first, int mid, int last, T temp[], _PR _pred) {
@@ -159,9 +167,7 @@ void _HEAP_ADJUST(T* s, int i, int length, _PR _pred) {
 		}
 		// 如果较大的子结点大于（或小于）父结点，则把子结点往上移动，替换它的父结点
 		if (!_pred(s[child], s[i])) {
-			temp = s[i];
-			s[i] = s[child];
-			s[child] = temp;
+			default_swap(s[i], s[child]);
 		}
 		else break; // 否则退出循环
 	}
@@ -184,9 +190,8 @@ void heap_sort(T* array, int size, _PR _pred) {
 	for (i = size - 1; i > 0; i--) {
 		// 把第一个元素和当前的最后一个元素交换;
 		// 保证当前的最后一个位置的元素都是在现在的这个序列之中最大（或最小）的
-		T temp = array[0];
-		array[0] = array[i];
-		array[i] = temp;
+		default_swap(array[0], array[i]);
+		
 		// 不断缩小调整heap的范围，每一次调整完毕保证第一个元素是当前序列的最大值（或最小值）
 		_HEAP_ADJUST(array, 0, i, _pred);
 	}
@@ -220,9 +225,7 @@ void bubble_sort(T* array, int size, _PR _pred) {
 		// 前半轮，将最大元素放到后面
 		for (int i = first; i < last; i++) {
 			if (_pred(array[i + 1], array[i])) {
-				T t = array[i];
-				array[i] = array[i + 1];
-				array[i + 1] = t;
+				default_swap(array[i + 1], array[i]);
 			}
 		}
 		last--;
@@ -230,9 +233,7 @@ void bubble_sort(T* array, int size, _PR _pred) {
 		// 后半轮，将最小元素放到前面
 		for (int i = last; i > first; i--) {
 			if (_pred(array[i], array[i - 1])) {
-				T t = array[i - 1];
-				array[i - 1] = array[i];
-				array[i] = t;
+				default_swap(array[i - 1], array[i]);
 			}
 		}
 		first++;
