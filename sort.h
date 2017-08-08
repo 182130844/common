@@ -2,12 +2,14 @@
 #define __sort_h__
 
 /*------------------------------------------------
-//       AUTHOR: SHADOW
-//      ADDRESS: SHENZHEN
-//         DATE: 8/7 2017
-//  DESCRIPTION: MERGE, QUICK, HEAP, BUBBLE
+//       Author: SHADOW
+//      Address: ShenZhen
+//         Date: 8/7 2017
+//  Description: Merge, Quick, Heap, Bubble
+//       E-Mail: shadow_yuan@qq.com
 //------------------------------------------------
 */
+
 #include <assert.h>
 #include <xutility>
 
