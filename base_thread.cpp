@@ -24,7 +24,7 @@ bool base_thread::activate(int threads, int stack_size) {
 	for (int i = 0; i < threads; i++) {
 
 #ifdef _WIN32	
-		HANDLE hThread = _beginthreadex(NULL, stack_size, _internal_proc, NULL, 0, NULL);
+		HANDLE hThread = _beginthreadex(NULL, stack_size, _internal_proc, this, 0, NULL);
 		if (hThread == NULL) {
 			printf("can't create thread (%d)\n", GetLastError());
 			return false;
