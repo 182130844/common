@@ -30,7 +30,7 @@ public:
 	~ring_buffer_thread() {
 #ifdef _WIN32
 		if (m_hEvent != INVALID_HANDLE_VALUE) {
-			::CloseHandle(m_hEvent);
+			CloseHandle(m_hEvent);
 		}
 #else
 		pthread_attr_destroy(&m_attr);
