@@ -32,7 +32,7 @@ bool base_thread::create(int number_of_threads, int stack_size) {
 	for (int i = 0; i < number_of_threads; i++) {
 
 #ifdef _WIN32	
-		HANDLE hThread = _beginthreadex(NULL, stack_size, _internal_proc, this, 0, NULL);
+		HANDLE hThread = (HANDLE)_beginthreadex(NULL, stack_size, _internal_proc, this, 0, NULL);
 		if (hThread == NULL) {
 			printf("can't create thread (%d)\n", GetLastError());
 			return false;
@@ -77,14 +77,14 @@ bool base_thread::wait_finish() {
 
 	for (thread_id_iterator it = m_thread_id_list.begin(); it != m_thread_id_list.end(); it++) {
 #ifdef _WIN32
-		int r = pthread_join(*it, 0);
-		if (r != 0) {
-			printf("pthread_join r=%d\n", r);
-		}
-#else
 		DWORD r = WaitForSingleObject(*it, INFINITE);
 		if (r != 0) {
 			printf("WaitForSingleObject r=%d\n", r);
+		}
+#else
+		int r = pthread_join(*it, 0);
+		if (r != 0) {
+			printf("pthread_join r=%d\n", r);
 		}
 #endif
 	}
@@ -93,9 +93,9 @@ bool base_thread::wait_finish() {
 }
 
 #ifdef _WIN32
-unsigned long base_thread::_internal_proc(void* ptr) {
+unsigned int base_thread::_internal_proc(void* ptr) {
 #else
-void*         base_thread::_internal_proc(void* ptr) {
+void*        base_thread::_internal_proc(void* ptr) {
 #endif
 	base_thread* pthis = reinterpret_cast<base_thread*>(ptr);
 	

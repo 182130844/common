@@ -39,9 +39,9 @@ protected:
 private:
 
 #ifdef _WIN32
-	static unsigned long __stdcall _internal_proc(void* ptr);
+	static unsigned int __stdcall _internal_proc(void* ptr);
 #else
-	static void*                   _internal_proc(void* ptr);
+	static void*                  _internal_proc(void* ptr);
 #endif
 #ifndef _WIN32
 	pthread_attr_t   m_attr;
