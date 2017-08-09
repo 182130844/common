@@ -29,7 +29,7 @@ public:
 
 	virtual int on_thread_proc() = 0;
 
-	bool start(int number_of_threads = 1, int stack_size = 4 * 1024 * 1024); // 默认栈大小为4MB
+	bool activate(int number_of_threads = 1, int stack_size = 4 * 1024 * 1024); // default stack size 4Mb
 	bool kill_all();
 	bool wait_finish();
 

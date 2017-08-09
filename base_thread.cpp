@@ -25,7 +25,7 @@ base_thread::~base_thread() {
 #endif
 }
 
-bool base_thread::start(int number_of_threads, int stack_size) {
+bool base_thread::activate(int number_of_threads, int stack_size) {
 	if (number_of_threads < 1) {
 		return false;
 	}
