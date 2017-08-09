@@ -27,9 +27,9 @@ public:
 	base_thread(const char* name);
 	~base_thread();
 
-	virtual int thread_proc() = 0;
+	virtual int on_thread_proc() = 0;
 
-	bool create(int number_of_threads = 1, int stack_size = 4 * 1048576); // 默认栈大小为4MB
+	bool start(int number_of_threads = 1, int stack_size = 4 * 1024 * 1024); // 默认栈大小为4MB
 	bool kill_all();
 	bool wait_finish();
 
@@ -39,9 +39,9 @@ protected:
 private:
 
 #ifdef _WIN32
-	static unsigned int __stdcall _internal_proc(void* ptr);
+	static unsigned int __stdcall _bt_proc(void* ptr);
 #else
-	static void*                  _internal_proc(void* ptr);
+	static void*                  _bt_proc(void* ptr);
 #endif
 #ifndef _WIN32
 	pthread_attr_t   m_attr;

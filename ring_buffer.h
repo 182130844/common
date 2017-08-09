@@ -2,7 +2,7 @@
 #define __ring_buffer_h__
 
 #include "mutex.h"
-
+#include <memory>
 class ring_buffer
 {
 public:
@@ -23,7 +23,7 @@ private:
 
 	thread_mutex m_mutex;
 
-	char*        m_data_ptr;
+	std::unique_ptr<char[]>  m_data;
 
 	int          m_init_size;
 	int          m_step_size;

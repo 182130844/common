@@ -10,19 +10,22 @@
 
 base_thread::base_thread(const char* name) {
 	strcpy(thread_name, name);
-
 #ifndef _WIN32
 	pthread_attr_init(&m_attr);
 #endif
 }
 
 base_thread::~base_thread() {
-#ifndef _WIN32
+#ifdef _WIN32
+	for (auto it : m_thread_id_list) {
+		CloseHandle(it);
+	}
+#else
 	pthread_attr_destroy(&m_attr);
 #endif
 }
 
-bool base_thread::create(int number_of_threads, int stack_size) {
+bool base_thread::start(int number_of_threads, int stack_size) {
 	if (number_of_threads < 1) {
 		return false;
 	}
@@ -31,8 +34,9 @@ bool base_thread::create(int number_of_threads, int stack_size) {
 
 	for (int i = 0; i < number_of_threads; i++) {
 
-#ifdef _WIN32	
-		HANDLE hThread = (HANDLE)_beginthreadex(NULL, stack_size, _internal_proc, this, 0, NULL);
+#ifdef _WIN32
+		unsigned int tid = 0;
+		HANDLE hThread = (HANDLE)_beginthreadex(NULL, stack_size, _bt_proc, this, 0, &tid);
 		if (hThread == NULL) {
 			printf("can't create thread (%d)\n", GetLastError());
 			return false;
@@ -41,7 +45,7 @@ bool base_thread::create(int number_of_threads, int stack_size) {
 		m_thread_id_list.push_back(hThread);
 #else
 		pthread_t tid;
-		int err = pthread_create(&tid, &m_attr, _internal_proc, this);
+		int err = pthread_create(&tid, &m_attr, _bt_proc, this);
 		if (err != 0) {
 			printf("can't create thread (%s)\n", strerror(err));
 			return false;
@@ -93,9 +97,9 @@ bool base_thread::wait_finish() {
 }
 
 #ifdef _WIN32
-unsigned int base_thread::_internal_proc(void* ptr) {
+unsigned int base_thread::_bt_proc(void* ptr) {
 #else
-void*        base_thread::_internal_proc(void* ptr) {
+void*        base_thread::_bt_proc(void* ptr) {
 #endif
 	base_thread* pthis = reinterpret_cast<base_thread*>(ptr);
 	
@@ -103,13 +107,11 @@ void*        base_thread::_internal_proc(void* ptr) {
 	if (pthis != nullptr) {
 		try {
 			strcpy(name, pthis->thread_name);
-			pthis->thread_proc();
+			pthis->on_thread_proc();
 		}
 		catch (...) {
 			printf("thread->thread_proc exception (%s)\n", name);
 		}
 	}
-#ifdef _WIN32
 	return 0;
-#endif
 }
