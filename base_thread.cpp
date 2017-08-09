@@ -1,4 +1,12 @@
 #include "base_thread.h"
+#include <stdio.h>
+#include <stdlib.h>
+#ifdef _WIN32
+#include <process.h>
+#else
+#include <string.h>
+#include <sys/types.h>
+#endif
 
 base_thread::base_thread(const char* name) {
 	strcpy(thread_name, name);
@@ -14,14 +22,14 @@ base_thread::~base_thread() {
 #endif
 }
 
-bool base_thread::activate(int threads, int stack_size) {
-	if (threads < 1) {
+bool base_thread::create(int number_of_threads, int stack_size) {
+	if (number_of_threads < 1) {
 		return false;
 	}
 	if (stack_size < 0)
 		stack_size = 0;
 
-	for (int i = 0; i < threads; i++) {
+	for (int i = 0; i < number_of_threads; i++) {
 
 #ifdef _WIN32	
 		HANDLE hThread = _beginthreadex(NULL, stack_size, _internal_proc, this, 0, NULL);
@@ -30,7 +38,7 @@ bool base_thread::activate(int threads, int stack_size) {
 			return false;
 		}
 		Sleep(10);
-		m_thread_list.push_back(hThread);
+		m_thread_id_list.push_back(hThread);
 #else
 		pthread_t tid;
 		int err = pthread_create(&tid, &m_attr, _internal_proc, this);
@@ -39,18 +47,18 @@ bool base_thread::activate(int threads, int stack_size) {
 			return false;
 		}
 		usleep(10000);
-		m_thread_list.push_back(tid);
+		m_thread_id_list.push_back(tid);
 #endif
 	}
 	return true;
 }
 
 bool base_thread::kill_all() {
-	guard g(&m_mutex);
-	if (m_thread_list.empty())
+	auto_lock _al(&m_mutex);
+	if (m_thread_id_list.empty())
 		return false;
 
-	for (ThreadIdIterator it = m_thread_list.begin(); it != m_thread_list.end(); it++) {
+	for (thread_id_iterator it = m_thread_id_list.begin(); it != m_thread_id_list.end(); it++) {
 #ifdef _WIN32
 		TerminateThread(*it, 0);
 		CloseHandle(*it);
@@ -58,16 +66,16 @@ bool base_thread::kill_all() {
 		pthread_cancel(*it);
 #endif
 	}
-	m_thread_list.clear();
+	m_thread_id_list.clear();
 	return true;
 }
 
 bool base_thread::wait_finish() {
-	guard g(&m_mutex);
-	if (m_thread_list.empty())
+	auto_lock _al(&m_mutex);
+	if (m_thread_id_list.empty())
 		return true;
 
-	for (ThreadIdIterator it = m_thread_list.begin(); it != m_thread_list.end(); it++) {
+	for (thread_id_iterator it = m_thread_id_list.begin(); it != m_thread_id_list.end(); it++) {
 #ifdef _WIN32
 		int r = pthread_join(*it, 0);
 		if (r != 0) {
@@ -80,7 +88,7 @@ bool base_thread::wait_finish() {
 		}
 #endif
 	}
-	m_thread_list.clear();
+	m_thread_id_list.clear();
 	return true;
 }
 

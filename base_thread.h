@@ -14,12 +14,12 @@ using std::list;
 #include "mutex.h"
 
 #ifdef _WIN32
-using ThreadIdList = list<HANDLE>;
+using thread_id_list = list<HANDLE>;
 #else
-using ThreadIdList = list<pthread_t>;
+using thread_id_list = list<pthread_t>;
 #endif
 
-using ThreadIdIterator = ThreadIdList::iterator;
+using thread_id_iterator = thread_id_list::iterator;
 
 class base_thread
 {
@@ -29,7 +29,7 @@ public:
 
 	virtual int thread_proc() = 0;
 
-	bool activate(int threads = 1, int stack_size = 4 * 1048576); // 默认栈大小为4MB
+	bool create(int number_of_threads = 1, int stack_size = 4 * 1048576); // 默认栈大小为4MB
 	bool kill_all();
 	bool wait_finish();
 
@@ -44,12 +44,12 @@ private:
 	static void*                   _internal_proc(void* ptr);
 #endif
 #ifndef _WIN32
-	pthread_attr_t m_attr;
+	pthread_attr_t   m_attr;
 #endif
 
-	thread_mutex   m_mutex;
+	thread_mutex     m_mutex;
 	
-	ThreadIdList   m_thread_list;
+	thread_id_list   m_thread_id_list;
 
 };
 #endif // __base_thread_h__
