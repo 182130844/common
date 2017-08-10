@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __singleton_h__
+#define __singleton_h__
 
 template <class T>
 class singleton {
@@ -10,3 +11,7 @@ private:
 	singleton(const singleton&);
 	singleton& operator= (const singleton&);
 };
+
+
+
+#endif // __singleton_h__
