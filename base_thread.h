@@ -44,12 +44,12 @@ private:
 	static void*                  _bt_proc(void* ptr);
 #endif
 #ifndef _WIN32
-	pthread_attr_t   m_attr;
+	pthread_attr_t   _i_attr;
 #endif
 
-	thread_mutex     m_mutex;
+	thread_mutex     _i_mutex;
 	
-	thread_id_list   m_thread_id_list;
+	thread_id_list   _i_thread_id_list;
 
 };
 #endif // __base_thread_h__

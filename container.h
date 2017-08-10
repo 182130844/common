@@ -23,11 +23,12 @@ public:
 		__super::push(t);
 	}
 
-	void pop(T& t) {
+	bool pop(T& t) {
 		auto_lock _al(&m_mutex);
-		if (empty()) return;
+		if (empty()) return false;
 		t = this->front();
 		__super::pop();
+		return true;
 	}
 private:
 	thread_mutex m_mutex;
