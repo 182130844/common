@@ -11,17 +11,17 @@
 base_thread::base_thread(const char* name) {
 	strcpy(thread_name, name);
 #ifndef _WIN32
-	pthread_attr_init(&_i_attr);
+	pthread_attr_init(&_bt_attr);
 #endif
 }
 
 base_thread::~base_thread() {
 #ifdef _WIN32
-	for (auto it : _i_thread_id_list) {
+	for (auto it : _bt_thread_id_list) {
 		CloseHandle(it);
 	}
 #else
-	pthread_attr_destroy(&_i_attr);
+	pthread_attr_destroy(&_bt_attr);
 #endif
 }
 
@@ -42,27 +42,27 @@ bool base_thread::activate(int number_of_threads, int stack_size) {
 			return false;
 		}
 		Sleep(10);
-		_i_thread_id_list.push_back(hThread);
+		_bt_thread_id_list.push_back(hThread);
 #else
 		pthread_t tid;
-		int err = pthread_create(&tid, &_i_attr, _bt_proc, this);
+		int err = pthread_create(&tid, &_bt_attr, _bt_proc, this);
 		if (err != 0) {
 			printf("can't create thread (%s)\n", strerror(err));
 			return false;
 		}
 		usleep(10000);
-		_i_thread_id_list.push_back(tid);
+		_bt_thread_id_list.push_back(tid);
 #endif
 	}
 	return true;
 }
 
 bool base_thread::kill_all() {
-	auto_lock _al(&_i_mutex);
-	if (_i_thread_id_list.empty())
+	auto_lock _al(&_bt_mutex);
+	if (_bt_thread_id_list.empty())
 		return false;
 
-	for (thread_id_iterator it = _i_thread_id_list.begin(); it != _i_thread_id_list.end(); it++) {
+	for (thread_id_iterator it = _bt_thread_id_list.begin(); it != _bt_thread_id_list.end(); it++) {
 #ifdef _WIN32
 		TerminateThread(*it, 0);
 		CloseHandle(*it);
@@ -70,16 +70,16 @@ bool base_thread::kill_all() {
 		pthread_cancel(*it);
 #endif
 	}
-	_i_thread_id_list.clear();
+	_bt_thread_id_list.clear();
 	return true;
 }
 
 bool base_thread::wait_finish() {
-	auto_lock _al(&_i_mutex);
-	if (_i_thread_id_list.empty())
+	auto_lock _al(&_bt_mutex);
+	if (_bt_thread_id_list.empty())
 		return true;
 
-	for (thread_id_iterator it = _i_thread_id_list.begin(); it != _i_thread_id_list.end(); it++) {
+	for (thread_id_iterator it = _bt_thread_id_list.begin(); it != _bt_thread_id_list.end(); it++) {
 #ifdef _WIN32
 		DWORD r = WaitForSingleObject(*it, INFINITE);
 		if (r != 0) {
@@ -92,7 +92,7 @@ bool base_thread::wait_finish() {
 		}
 #endif
 	}
-	_i_thread_id_list.clear();
+	_bt_thread_id_list.clear();
 	return true;
 }
 
