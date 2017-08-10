@@ -67,7 +67,7 @@ private:
 	timer_setting_queue m_settings;
 
 	timer_map m_timer_map;
-	timer_event_sink* m_i_service;
+	timer_event_sink* m_event_sink;
 };
 
 #define timerInst  timer::instance()

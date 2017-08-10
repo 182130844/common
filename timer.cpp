@@ -21,20 +21,20 @@ struct timer_key {
 timer::timer()
 	: base_thread("timer")
 	, m_is_run(false)
-	, m_i_service(nullptr) {
+	, m_event_sink(nullptr) {
 
 
 }
 
 bool timer::initialize(timer_event_sink* s, long time_unit) {
 	if (!s) return false;
-	m_i_service = s;
+	m_event_sink = s;
 	m_unit_of_time = time_unit;
 	return true;
 }
 
 bool timer::start() {
-	if (!m_i_service || m_is_run)
+	if (!m_event_sink || m_is_run)
 		return false;
 
 	m_is_run = true;
@@ -153,7 +153,7 @@ void timer::check_timer() {
 		if (it->second.count <= 0) {
 			timer_key tk;
 			tk.key = it->first;
-			m_i_service->on_timer(tk.id1, tk.id2, tk.id3, tk.tid, it->second.data);
+			m_event_sink->on_timer(tk.id1, tk.id2, tk.id3, tk.tid, it->second.data);
 			auto_lock _al(&m_mutex);
 			it = m_timer_map.erase(it);
 		}
