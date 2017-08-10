@@ -26,7 +26,7 @@ timer::timer()
 
 }
 
-bool timer::initialize(interface_timer_service* s, long time_unit) {
+bool timer::initialize(timer_event_sink* s, long time_unit) {
 	if (!s) return false;
 	m_i_service = s;
 	m_unit_of_time = time_unit;

@@ -11,7 +11,7 @@ using ushort = unsigned short;
 using ulong = unsigned long;
 using ulonglong = unsigned long long;
 
-class interface_timer_service
+class timer_event_sink
 {
 public:
 	virtual void on_timer(ushort tid1, ushort tid2, ushort tid3, ushort tid, int data) = 0;
@@ -42,7 +42,7 @@ public:
 	~timer() = default;
 
 	virtual int on_thread_proc() override;
-	bool initialize(interface_timer_service* s, long time_unit = 1000 /* ms, defalut 1 second */);
+	bool initialize(timer_event_sink* s, long time_unit = 1000 /* ms, defalut 1 second */);
 	bool start();
 	bool stop();
 
@@ -67,7 +67,7 @@ private:
 	timer_setting_queue m_settings;
 
 	timer_map m_timer_map;
-	interface_timer_service* m_i_service;
+	timer_event_sink* m_i_service;
 };
 
 #define timerInst  timer::instance()
