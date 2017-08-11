@@ -80,7 +80,7 @@ public:
 			if (hThread == NULL) {
 				return false;
 			}
-			CloseHandle(hThread);
+			CloseHandle(hThread); // close handle
 			Sleep(100);
 
 #else

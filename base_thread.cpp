@@ -17,6 +17,7 @@ base_thread::base_thread(const char* name) {
 
 base_thread::~base_thread() {
 #ifdef _WIN32
+	// close handle
 	for (auto it : _bt_thread_id_list) {
 		CloseHandle(it);
 	}
