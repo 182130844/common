@@ -1,9 +1,25 @@
-#pragma once
-#include <Windows.h>
 
-// shenzhen
-// 5/23 2018
+//=====================================================================
+// 
 // shadow_yuan@qq.com
+// shenzhen 5/23 2018
+//
+//=====================================================================
+
+#pragma once
+
+template<typename dst_type, typename src_type>
+dst_type union_cast(src_type src) {
+	union {
+		src_type src;
+		dst_type dst;
+	}u;
+	u.src = src;
+	return u.dst;
+};
+
+#ifdef _WIN32
+#include <Windows.h>
 
 #pragma pack(push, 1)
 
@@ -30,3 +46,4 @@ struct ThunkData {
 };
 
 #pragma pack(pop)
+#endif
