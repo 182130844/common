@@ -1,92 +1,93 @@
-#ifndef __mutex_h__
-#define __mutex_h__
 
-#ifdef _WIN32
-#include <windows.h>
-#else
+#pragma once
+#ifndef _WIN32
 #include <pthread.h>
 #include <unistd.h>
+#else
+#include <Windows.h>
 #endif
 #include <stdio.h>
 
-#include <list>
-using std::list;
-
-
-class mutex
-{
+class mutex {
 public:
 	virtual void lock() = 0;
-	virtual void unlock() = 0;
+	virtual void un_lock() = 0;
 	virtual bool try_lock() = 0;
 };
 
-class auto_lock
-{
+
+class guard {
 public:
-	auto_lock(mutex* ptr) :_lock(ptr) {
-		if (_lock) {
-			_lock->lock();
+	guard(mutex* p_mutex)
+	{
+		_p_mutex = p_mutex;
+		if (_p_mutex) {
+			_p_mutex->lock();
 		}
 	}
-	~auto_lock() {
-		if (_lock) {
-			_lock->unlock();
+	guard(mutex& m)
+	{
+		_p_mutex = &m;
+		_p_mutex->lock();
+	}
+	~guard()
+	{
+		if (_p_mutex) {
+			_p_mutex->un_lock();
 		}
 	}
 private:
-	mutex* volatile _lock;
+	mutex* volatile _p_mutex;
 };
 
-#ifdef _WIN32
-class thread_mutex : public mutex
-{
+#ifndef _WIN32
+class thread_mutex : public mutex {
 public:
-	thread_mutex() {
-		::InitializeCriticalSection(&_cs);
+	thread_mutex()
+	{
+		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+		pthread_mutex_init(&_mutex, &attr);
 	}
-	~thread_mutex() {
-		::DeleteCriticalSection(&_cs);
-	}
-	virtual void lock() override {
-		::EnterCriticalSection(&_cs);
-	}
-	virtual void unlock() override {
-		::LeaveCriticalSection(&_cs);
-	}
-	virtual bool try_lock() override {
-		return true;
-	}
-private:
-	CRITICAL_SECTION _cs;
-};
-
-#else
-
-class thread_mutex : public mutex
-{
-public:
-	thread_mutex() {
-		pthread_mutexattr_settype(&_attr, PTHREAD_MUTEX_RECURSIVE);
-		pthread_mutex_init(&_mutex);
-	}
-	~thread_mutex() {
+	~thread_mutex()
+	{
 		pthread_mutex_destroy(&_mutex);
 	}
-	virtual void lock() override {
+	virtual void lock()
+	{
 		pthread_mutex_lock(&_mutex);
 	}
-	virtual void unlock() override {
+	virtual void un_lock()
+	{
 		pthread_mutex_unlock(&_mutex);
 	}
-	virtual bool try_lock() override {
+	virtual bool try_lock()
+	{
 		return (pthread_mutex_trylock(&_mutex) == 0);
 	}
 private:
-	pthread_mutexattr_t   _attr;
-	pthread_mutex_t      _mutex;
+	pthread_mutexattr_t attr;
+	pthread_mutex_t _mutex;
 };
-#endif
-
-
-#endif // __mutex_h__
+#else
+class thread_mutex : public mutex {
+public:
+	thread_mutex()
+	{
+		::InitializeCriticalSection(&cs);
+	}
+	~thread_mutex()
+	{
+		::DeleteCriticalSection(&cs);
+	}
+	virtual void lock() {
+		::EnterCriticalSection(&cs);
+	}
+	virtual void un_lock() {
+		::LeaveCriticalSection(&cs);
+	}
+	virtual bool try_lock() {
+		return true;
+	}
+	CRITICAL_SECTION cs;
+};
+#endif//thread_mutex
