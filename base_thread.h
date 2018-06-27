@@ -9,7 +9,7 @@ class base_thread
 public:
 	base_thread(const char* name = "");
 	virtual ~base_thread();
-	virtual int thread_proc() = 0;
+	virtual void thread_proc() = 0;
 	bool activate(size_t threads = 1);
 	void join();
 	static void sleep(int ms);

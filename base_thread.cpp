@@ -8,7 +8,7 @@ base_thread::base_thread(const char* name) {
 }
 
 base_thread::~base_thread() {
-
+	join();
 }
 
 bool base_thread::activate(size_t threads) {
