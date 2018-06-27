@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include <chrono>
+#include <string.h>
 #include "base_thread.h"
-#pragma warning(disable:4996)
 
 base_thread::base_thread(const char* name) {
 	strcpy(thread_name, name);
@@ -32,7 +32,7 @@ void base_thread::run() {
 		thread_proc();
 	}
 	catch (...) {
-		std::cout << "thread_proc exception: " << thread_name << std::endl;
+		std::cout << "thread_proc exception: " << "[" << std::this_thread::get_id() << "]" << thread_name << std::endl;
 	}
 }
 
