@@ -1,17 +1,15 @@
-#ifndef __singleton_h__
-#define __singleton_h__
 
-template <class T>
+
+#pragma once
+
+template <typename T>
 class singleton {
 public:
 	static T* instance() { static T t; return &t; }
+	~singleton() = default;
 protected:
 	singleton() = default;
 private:
-	singleton(const singleton&);
-	singleton& operator= (const singleton&);
+	singleton(const singleton&) = delete;
+	singleton& operator= (const singleton&) = delete;
 };
-
-
-
-#endif // __singleton_h__
