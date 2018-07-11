@@ -1,14 +1,12 @@
-#ifndef __random_h__
-#define __random_h__
 
-class randomex
+#pragma once
+
+namespace shadow
 {
-public:
-	static void seed(int s);
-	static int  rand();
-	static int  rand(int nMin, int nMax);
-private:
-	static void shift();
-	static unsigned long _seed;
-};
-#endif // __random_h__
+	namespace random
+	{
+		void seed();
+		int  rand();
+		int  rand(int nMin, int nMax);
+	}
+}
