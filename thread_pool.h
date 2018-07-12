@@ -15,6 +15,7 @@
 #include <future>
 #include <condition_variable>
 
+namespace shadow {
 
 class thread_pool
 {
@@ -98,3 +99,5 @@ private:
 	std::condition_variable  cond_var_;
 	std::atomic<bool>        stopped_;
 };
+
+}

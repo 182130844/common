@@ -8,6 +8,8 @@
 #pragma once
 #include <utility>
 
+namespace shadow {
+
 template<typename T, size_t BlockSize = 4096>
 class memory_pool
 {
@@ -92,3 +94,5 @@ private:
 
 	static_assert(BlockSize >= 2 * sizeof(node_type), "[memory pool] BlockSize too small.");
 };
+
+}
