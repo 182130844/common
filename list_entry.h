@@ -120,5 +120,10 @@ AppendTailList(
 	return;
 }
 
+#if defined(_WIN64) || defined(__x86_64__)
+#define CONTAINTING_RECORD(address, type, field) \
+	((type*)((char*)(address) - (uint64_t)(&((type*)0)->field)))
+#else
 #define CONTAINTING_RECORD(address, type, field) \
 	((type*)((char*)(address) - (uint32_t)(&((type*)0)->field)))
+#endif
