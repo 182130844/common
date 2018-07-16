@@ -1,4 +1,8 @@
-#pragma once
+﻿#pragma once
+
+//
+//  常用函数
+//
 
 namespace shadow {
 
