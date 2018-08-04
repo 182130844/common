@@ -1,21 +1,9 @@
-#ifndef __common_h__
-#define __common_h__
-
-#include <list>
-#include <map>
-#include <vector>
-#include <string>
+﻿
+#pragma once
 #include <memory>
 
-using std::string;
-using std::vector;
-using std::list;
-using std::map;
-using std::shared_ptr;
-using std::unique_ptr;
-
 template <class A, class B>
-shared_ptr<A> As(const B& ptr) {
+std::shared_ptr<A> As(const B& ptr) {
 	return std::dynamic_pointer_cast<A>(ptr);
 }
 
@@ -25,8 +13,28 @@ bool Is(const B& ptr) {
 }
 
 template <class T, class... Args>
-inline shared_ptr<T> New(Args&&... args) {
+inline std::shared_ptr<T> New(Args&&... args) {
 	return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
-#endif // __common_h__
+// 10进制转其他进制(10以下)，默认10转8
+template<typename T, int radix = 8>
+T Conversion(T value) {
+	T ret = value % radix;
+	int i = 0;
+	do {
+		value = value / radix;
+		if (value != 0) {
+			i++;
+
+			T  base = (value % radix);
+			for (int j = 0; j < i; j++) {
+				base *= 10;
+			}
+			ret += base;
+		}
+
+	} while (value >= radix);
+
+	return ret;
+}
