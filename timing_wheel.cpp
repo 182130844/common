@@ -337,6 +337,7 @@ namespace shadow {
 		}
 
 		GUARD(mutex_);
+		tm.tm_base_->state = TimerState::TIMER_STATE_QUEUE;
 		tm.tm_base_->event = TimerEvent::TIMER_EVENT_SET;
 		tm.tm_base_->start = shadow::current_milliseconds();
 		tm.tm_base_->expires = tm.tm_base_->start + tm.tm_base_->delay;
@@ -558,6 +559,7 @@ namespace shadow {
 
 		list_entry* list_head = &tvec->vec[real];
 		InsertTailList(list_head, &tm.tm_base_->node);
+		tm.tm_base_->state = TimerState::TIMER_STATE_SETTING;
 	}
 
 	void timing_wheel::do_set_timer(struct timer_base* tb) {
