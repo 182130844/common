@@ -18,9 +18,9 @@
 void DirectoryEntry::replaceFilename(const std::wstring& p, FileType type /* = FileType::kTypeUnknown */) {
     auto n = _path.find_last_of(L"/\\");
     if (n != std::wstring::npos) {
-        _path.resize(n + 1);
+        _path.resize(n);
     }
-    _path += p;
+    _path += L"\\" + p;
     _type = type;
 }
 
